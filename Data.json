@@ -1,0 +1,84 @@
+{
+    "Admins": [
+        {
+            "Id": 1,
+            "Name": "ammar",
+            "Email": "ammar@gmail.com"
+        }
+    ],
+    "Customers": [
+        {
+            "Id": 1,
+            "Name": "saad",
+            "Email": "saad@gmail.com",
+            "Balance": 2000
+        },
+        {
+            "Id": 2,
+            "Name": "ahmed",
+            "Email": "ahmed@gmail.com",
+            "Balance": 4000
+        },
+        {
+            "Id": 3,
+            "Name": "mohamed",
+            "Email": "mohamed@gmail.com",
+            "Balance": 3000
+        },
+        {
+            "Id": 4,
+            "Name": "hany",
+            "Email": "hany@gmail.com",
+            "Balanace": 2000
+        }
+    ],
+    "Items": [
+        {
+            "Id": 1,
+            "Name": "Prd1",
+            "Price": 200,
+            "Quantity": 10,
+            "CategoryId": 1
+        },
+        {
+            "Id": 2,
+            "Name": "Prd2",
+            "Price": 300,
+            "Quantity": 10,
+            "CategoryId": 2
+        },
+        {
+            "Id": 3,
+            "Name": "Prd3",
+            "Price": 400,
+            "Quantity": 10,
+            "CategoryId": 1
+        },
+        {
+            "Id": 4,
+            "Name": "Prd4",
+            "Price": 500,
+            "Quantity": 10,
+            "CategoryId": 2
+        },
+        {
+            "Id": 5,
+            "Name": "Prd5",
+            "Price": 600,
+            "Quantity": 10,
+            "CategoryId": 1
+        }
+    ],
+    "Categories": [
+        {
+            "Id": 1,
+            "Name": "Cat1"
+        },
+        {
+            "Id": 2,
+            "Name": "Cat2"
+        }
+    ],
+    "Orders": [],
+    "OrderItems": []
+}
