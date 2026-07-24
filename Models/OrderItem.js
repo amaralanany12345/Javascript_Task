@@ -5,6 +5,6 @@ export class OrderItem extends Repository{
         ItemId;
         Quantity;
         constructor(){
-            super("OrderItems")
+            super("OrderItems","./Data.json")
         }
 }

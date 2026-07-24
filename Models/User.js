@@ -1,8 +1,11 @@
-export class User {
+import { Repository } from "../Repositories/RepositoryService.js";
+
+export class User extends Repository {
     Id;
     Name;
     Email;
-    // constructor(name){
-    //     super(this.name)
-    // }
+    Type;
+    constructor(){
+        super("Users","./Data.json")
+    }
 }

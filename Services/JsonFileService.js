@@ -1,9 +1,10 @@
 import fs from "fs";
-export function ReadFromJson(){
-    return JSON.parse(fs.readFileSync("./Data.json","utf-8"))
+export function ReadFromJson(path){
+    return JSON.parse(fs.readFileSync(path,"utf-8"))
 }
 
-export function AddDataToJson(data){
-    fs.writeFileSync("./Data.json",JSON.stringify(data,null,4)
+export function AddDataToJson(data,path){
+    fs.writeFileSync(path,JSON.stringify(data,null,4)
     );
 }
+

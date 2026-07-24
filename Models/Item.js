@@ -7,14 +7,13 @@ export class Item extends Repository{
     CategoryId;
     Quantity;
     constructor(){
-        super("Items")
+        super("Items","./Data.json")
     }
-    // updateItem(id){
-    //     const json=ReadFromJson()
-    //     json[this.arrName]=this.data
-    //     let item=this.findById(id)
-    //     console.log(json.Customers);
-    //     item.Price=200
-    //     AddDataToJson(json)
-    // }
+    updateItemQuantity(id,subtractedQuantity){
+        const json=ReadFromJson("./Data.json")
+        json[this.arrName]=this.data
+        let item=this.findById(id)
+        item.Quantity-=subtractedQuantity
+        AddDataToJson(json,"./Data.json")
+    }
 }

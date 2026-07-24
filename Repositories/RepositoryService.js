@@ -1,11 +1,12 @@
 import {ReadFromJson,AddDataToJson} from "../Services/JsonFileService.js"
 
 export class Repository {
-    constructor(arrName)
+    constructor(arrName,pathFile)
     {
-      this.arrName=arrName
-      const jsonData=ReadFromJson();
-      this.data=jsonData[arrName]
+        this.arrName=arrName
+        this.pathFile=pathFile
+        const jsonData=ReadFromJson(pathFile);
+        this.data=jsonData[arrName]
     }
     getAll()
     {
@@ -14,17 +15,17 @@ export class Repository {
     add(item)
     {
         this.data.push(item)
-        const jsonData=ReadFromJson();
+        const jsonData=ReadFromJson(this.pathFile);
         jsonData[this.arrName]=this.data;
-        AddDataToJson(jsonData)
+        AddDataToJson(jsonData,this.pathFile)
         return item
     }
     findById(Id)
     {
         return this.data.find(item=>item.Id===Id)
     }            
-    find(predicate)
-    {
-
-    }      
+    find(predicate){
+       return this.data.find(predicate)
+    }
+          
 }
