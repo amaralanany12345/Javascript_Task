@@ -36,7 +36,7 @@
             "Id": 1,
             "Name": "Prd1",
             "Price": 200,
-            "Quantity": 5,
+            "Quantity": 4,
             "CategoryId": 1
         },
         {
@@ -88,6 +88,11 @@
             "Id": 2,
             "CustomerId": 3,
             "TotalPrice": 900
+        },
+        {
+            "Id": 3,
+            "CustomerId": 1,
+            "TotalPrice": 200
         }
     ],
     "OrderItems": [
@@ -109,6 +114,11 @@
         {
             "OrderId": 2,
             "ItemId": 2,
+            "Quantity": 1
+        },
+        {
+            "OrderId": 3,
+            "ItemId": 1,
             "Quantity": 1
         }
     ]

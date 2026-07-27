@@ -100,7 +100,7 @@ function customerMenu(customer){
                 case"6":
                     categoryService.getAll().forEach(element => {
                         console.log("category name is : "+element.Name)
-                        console.log("category items is")
+                        console.log("category items are : ")
                         console.log(itemService.getAll().filter(a=>a.CategoryId==element.Id))
                     });
                     customerMenu(customer)
@@ -118,9 +118,18 @@ function customerMenu(customer){
                     for(let x in data){
                         data[x]=data[x].map(a=>({
                             ...a,OrderItems:orderItemService.getAll().filter(item=>item.OrderId==a.Id)
-                        }))
+                        }))                       
                     }
-                    console.log(data)
+                    for(let x in data){
+                            let  allItems = data[x].flatMap(a=>a.OrderItems);
+                            let custItems=Object.groupBy(allItems,a=>a.ItemId)
+                            for(let y in custItems){
+                                let totalQuantity=custItems[y].reduce((total,value)=>total+value.Quantity,0)
+                                console.log(`item name is ${itemService.getAll().find(a=>a.Id==y).Name} , total quantity is ${totalQuantity}`)
+                            }
+                        console.log('----')
+                    }
+
                     Input.close()
                     break;
                 case "0":
@@ -178,3 +187,5 @@ function AddItemToOrder(newOrder){
         }
     })
 }
+
+
