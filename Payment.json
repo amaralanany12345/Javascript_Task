@@ -2,15 +2,19 @@
     "Wallets": [
         {
             "UserId": 1,
-            "Balance": 800
+            "Balance": 100
         },
         {
             "UserId": 3,
-            "Balance": 1100
+            "Balance": 100
         },
         {
             "UserId": 4,
             "Balance": 2000
+        },
+        {
+            "UserId": 5,
+            "Balance": 1300
         }
     ]
 }

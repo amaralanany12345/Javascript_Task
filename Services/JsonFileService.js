@@ -1,10 +1,11 @@
-import fs from "fs";
-export function ReadFromJson(path){
-        return JSON.parse(fs.readFileSync(path,"utf-8"))
+import fs, { read } from "fs";
+import {readFile,writeFile} from "fs/promises"
+export async function ReadFromJson(path){
+        return JSON.parse(await readFile(path,"utf-8"))
 }
 
-export function AddDataToJson(data,path){
-        fs.writeFileSync(path,JSON.stringify(data,null,4)
+export async function AddDataToJson(data,path){
+        await writeFile(path,JSON.stringify(data,null,4)
     );
 }
 

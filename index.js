@@ -21,39 +21,46 @@ const Input = readline.createInterface({
     output: process.stdout
 });
 
-Input.question('Enter your id: ', (id) => {
-    let user=userService.findById(parseInt(id));
+function enterInput(question) {
+    return new Promise(resolve => {
+        Input.question(question, answer => {
+            resolve(answer);
+        });
+    });
+}
+
+async function StartProject(){
+    let id=await enterInput('Enter your id: ')
+    let user=await userService.findById(parseInt(id));
     if(user==null){
         console.log("not found , please signup")
-         Input.question("Enter your name: ",(name)=>{
-            Input.question("Enter your email: ",(email)=>{
-                userService.add({
-                    Id:userService.getAll()[userService.getAll().length-1].Id+1,
-                    Name:name,
-                    Email:email,
-                    Type:"customer"
-                })
-                WalletService.add({
-                    UserId:userService.getAll()[userService.getAll().length-1].Id,
-                    Balance:2000
-                })
-                customerMenu(user)
-            })
+        let name=await enterInput("Enter your name: ")
+        let email=await enterInput("Enter your email: ")
+        user=await userService.add({
+            Id:(await userService.getAll())[(await userService.getAll()).length-1].Id+1,
+            Name:name,
+            Email:email,
+            Type:"customer"
         })
+        await WalletService.add({
+            UserId:(await userService.getAll())[(await userService.getAll()).length-1].Id,
+            Balance:2000
+        })
+        await customerMenu(user)
     }
     else{
         if(user.Type=="customer"){
-            customerMenu(user)
+            await customerMenu(user)
         }
         else{
             console.log("admin")
             Input.close()
         }
     }
+}
 
-});
 
-function customerMenu(customer){
+async function customerMenu(customer){
         console.log("Add order : 1 ");
         console.log("get item within price range : 2 ");
         console.log("get item By name : 3 ");
@@ -62,62 +69,61 @@ function customerMenu(customer){
         console.log("show items grouped by category : 6 ");
         console.log("show total stock value per category : 7 ");
         console.log("Show the customer’s order history grouped by item : 8 ");
-        Input.question("Enter number : ",(number)=>{
+            let number=await enterInput("Enter number : ")
             switch(number)
             {
                 case "1":
-                    let newOrder=orderService.add({
-                        Id:orderService.getAll().length>0 ? orderService.getAll()[orderService.getAll().length-1].Id+1 : 1 ,
+                    let newOrder=await orderService.add({
+                        Id:(await orderService.getAll()).length>0 ? (await orderService.getAll())[(await orderService.getAll()).length-1].Id+1 : 1 ,
                         CustomerId:customer.Id,
                         TotalPrice:0
                     })
-                    AddItemToOrder(newOrder)
+                    await AddItemToOrder(newOrder)
                     break;
                 case "2":
-                    Input.question("enter min price : ",(min)=>{
-                        Input.question("enter max price : ",(max)=>{
-                            console.log(itemService.getAll().filter(a=>a.Price>=parseInt(min) && a.Price<=parseInt(max)))
-                            customerMenu(customer)
-                        })
-                    })
+                    let min=await enterInput("enter min price : ")
+                    let max=await enterInput("enter max price : ")
+                    console.log((await itemService.getAll()).filter(a=>a.Price>=parseInt(min) && a.Price<=parseInt(max)))
+                    await customerMenu(customer)
                     break;
                 case "3":
-                    Input.question("enter name of item : ",(itemName)=>{
-                        console.log(itemService.getAll().filter(a=>a.Name.includes(itemName)))
+                        let itemName=await enterInput("enter name of item : ")
+                        console.log((await itemService.getAll()).filter(a=>a.Name.includes(itemName)))
                         customerMenu()
-                    })
                     break;
                 case "4":
-                        console.log(itemService.getAll().filter(a=>a.Quantity>0))
-                        customerMenu()
+                        console.log((await itemService.getAll()).filter(a=>a.Quantity>0))
+                        await customerMenu()
                     break;
                 case"5":
-                    Input.question("enter category id : ",(categoryId)=>{
-                        console.log(itemService.getAll().filter(a=>a.CategoryId==parseInt(categoryId)))
-                        customerMenu(customer)
-                    })
+                        let categoryId=await enterInput("enter category id : ")
+                        console.log((await itemService.getAll()).filter(a=>a.CategoryId==parseInt(categoryId)))
+                        await customerMenu(customer)
                     break;
                 case"6":
-                    categoryService.getAll().forEach(element => {
-                        console.log("category name is : "+element.Name)
+                    for(let element of await categoryService.getAll()){
                         console.log("category items are : ")
-                        console.log(itemService.getAll().filter(a=>a.CategoryId==element.Id))
-                    });
-                    customerMenu(customer)
+                        console.log("category name is : "+element.Name)
+                        let categoryItems=(await itemService.getAll()).filter(a=>a.CategoryId==element.Id)
+                        console.log(categoryItems)
+                    }
+                    await customerMenu(customer)
                     break;
                 case"7":
-                    categoryService.getAll().forEach(element => {
-                        let categoryItems=itemService.getAll().filter(a=>a.CategoryId==element.Id)
+                    for(let element of await categoryService.getAll()){
+                        let categoryItems=(await itemService.getAll()).filter(a=>a.CategoryId==element.Id)
                         let stockValue=categoryItems.reduce((total,value)=>total+value.Price*value.Quantity,0)
                         console.log(`category name is : ${element.Name} , total stock value is ${stockValue} `)
-                    });
-                    customerMenu(customer)
+                    }
+                    await customerMenu(customer)
                     break;
                 case"8":
-                    let data=Object.groupBy(orderService.getAll(),a=>a.CustomerId)
+                let orders=await orderService.getAll()
+                let orderItems=await orderItemService.getAll()
+                    let data=Object.groupBy(orders,a=>a.CustomerId)
                     for(let x in data){
                         data[x]=data[x].map(a=>({
-                            ...a,OrderItems:orderItemService.getAll().filter(item=>item.OrderId==a.Id)
+                            ...a,OrderItems:orderItems.filter(item=>item.OrderId==a.Id)
                         }))                       
                     }
                     for(let x in data){
@@ -125,67 +131,63 @@ function customerMenu(customer){
                             let custItems=Object.groupBy(allItems,a=>a.ItemId)
                             for(let y in custItems){
                                 let totalQuantity=custItems[y].reduce((total,value)=>total+value.Quantity,0)
-                                console.log(`item name is ${itemService.getAll().find(a=>a.Id==y).Name} , total quantity is ${totalQuantity}`)
+                                console.log(`item name is ${(await itemService.findById(y)).Name} , total quantity is ${totalQuantity}`)
                             }
                         console.log('----')
                     }
-
-                    Input.close()
+                    await customerMenu(customer)
                     break;
                 case "0":
                     Input.close();
                     break;
                 default:
                     console.log("your choise is invalid")
-                    customerMenu(customer)
+                    await customerMenu(customer)
             }
-        })
 }
 
-function AddItemToOrder(newOrder){
+async function AddItemToOrder(newOrder){
     console.log("add newItem to order : 1 ")
     console.log("Guess the check : 2 ")
     console.log("customer menu : 3 ")
-    Input.question("enter option number : ",(number)=>{
+        let number=await enterInput("enter option number : ")
         switch(number){
             case "1":
-                Input.question("enter item id : ",(itemId)=>{
-                    if(itemService.findById(parseInt(itemId))!=null)
+                    let itemId=await enterInput("enter item id : ")
+                    if(await itemService.findById(parseInt(itemId))!=null)
                     {
-                        Input.question("enter quantity : ",(quantity)=>{
-                            if(itemService.findById(parseInt(itemId)).Quantity > parseInt(quantity))
+                            let quantity=await enterInput("enter quantity : ")
+                            if((await itemService.findById(parseInt(itemId))).Quantity > parseInt(quantity))
                             {
-                                orderItemService.add({
+                                await orderItemService.add({
                                     OrderId:newOrder.Id,
                                     ItemId:parseInt(itemId),
                                     Quantity:parseInt(quantity)
                                 })
-                                itemService.updateItemQuantity(parseInt(itemId),parseInt(quantity))
-                                AddItemToOrder(newOrder)
+                                await itemService.updateItemQuantity(parseInt(itemId),parseInt(quantity))
+                                await AddItemToOrder(newOrder)
                             }
                             else{
                                 throw new Error("quantity out of stock")
                             }
-                        })
                     }
                     else{
-                                throw new Error("item is not found")
+                        throw new Error("item is not found")
                     }
-                })
                 break;
             case "2":
-                orderService.updateOrderPrice(newOrder.Id)
-                AddItemToOrder(newOrder)
+                await orderService.updateOrderPrice(newOrder.Id)
+                console.log(`total price of the order is ${(await orderService.findById(newOrder.Id)).TotalPrice} `)
+                await customerMenu(await userService.findById(newOrder.CustomerId))
                 break;
             case "3":
-                Input.close();
+                await customerMenu(await userService.findById(newOrder.CustomerId))
                 break;
 
             default :
             console.log("your choise is invalid")
-            AddItemToOrder(newOrder)
+            await AddItemToOrder(newOrder)
         }
-    })
 }
-
+StartProject()
 

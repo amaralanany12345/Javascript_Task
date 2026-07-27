@@ -1,17 +1,20 @@
 import { Repository } from "../Repositories/RepositoryService.js";
 import { AddDataToJson,ReadFromJson } from "../Services/JsonFileService.js";
+import { setTimeout } from "node:timers/promises";
+
 export class Wallet extends Repository{
     UserId;
     Balance;
     constructor(){
         super("Wallets","./Payment.json")
     }
-    updateWalletBalnce(userId,subtractedBalance){
-        const json=ReadFromJson("./Payment.json")
-        json[this.arrName]=this.data
-        let userWallet=this.getAll().find(a=>a.UserId==userId)
+    async updateWalletBalnce(userId,subtractedBalance){
+        console.log("processing payment ...");
+        await setTimeout(1000);
+        const json=await ReadFromJson("./Payment.json")
+        let userWallet=await json.Wallets.find(a=>a.UserId==userId)
         userWallet.Balance-=subtractedBalance;
-        AddDataToJson(json,"./Payment.json")
+        await AddDataToJson(json,"./Payment.json")
     }
 }
 

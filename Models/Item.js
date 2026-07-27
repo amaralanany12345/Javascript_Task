@@ -9,11 +9,11 @@ export class Item extends Repository{
     constructor(){
         super("Items","./Data.json")
     }
-    updateItemQuantity(id,subtractedQuantity){
-        const json=ReadFromJson("./Data.json")
-        json[this.arrName]=this.data
-        let item=this.findById(id)
+    async updateItemQuantity(id,subtractedQuantity){
+        const json=await ReadFromJson("./Data.json")
+        // json[this.arrName]=this.data
+        let item=await json.Items.find(a=>a.Id==id)
         item.Quantity-=subtractedQuantity
-        AddDataToJson(json,"./Data.json")
+        await AddDataToJson(json,"./Data.json")
     }
 }

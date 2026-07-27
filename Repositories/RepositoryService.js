@@ -5,27 +5,30 @@ export class Repository {
     {
         this.arrName=arrName
         this.pathFile=pathFile
-        const jsonData=ReadFromJson(pathFile);
-        this.data=jsonData[arrName]
+        
     }
-    getAll()
+    async getAll()
     {
-        return this.data;
+        const jsonData=await ReadFromJson(this.pathFile);
+        let data=jsonData[this.arrName]
+        return data;
     }
-    add(item)
+    async add(item)
     {
-        this.data.push(item)
-        const jsonData=ReadFromJson(this.pathFile);
-        jsonData[this.arrName]=this.data;
-        AddDataToJson(jsonData,this.pathFile)
+        let data=await this.getAll()
+        data.push(item)
+        const jsonData=await ReadFromJson(this.pathFile);
+        jsonData[this.arrName]=data;
+        await AddDataToJson(jsonData,this.pathFile)
         return item
     }
-    findById(Id)
+    async findById(Id)
     {
-        return this.data.find(item=>item.Id===Id)
+        let data=await this.getAll()
+        return data.find(item=>item.Id==Id)
     }            
-    find(predicate){
-       return this.data.find(predicate)
+    async find(predicate){
+        let data=await this.getAll()
+       return data.find(predicate)
     }
-          
 }
